@@ -1,25 +1,73 @@
-import logo from './logo.svg';
-import './App.css';
+import {Route, Routes} from "react-router-dom";
+import Globalstyle from "./components/Globalstyle";
+import Main from "./pages/Main";
+import Aside from "./components/Aside";
+import { ThemeProvider } from "styled-components";
+import { useState } from "react";
+import Nav from "./components/Nav";
+import store from "./store";
+import { Provider,  useSelector } from "react-redux";
+import Member from "./pages/Member";
+import Login from "./pages/Login";
+
+
+
 
 function App() {
+
+
+  //  useSelect는 Provider 내에서 사용할수가 없다. 리덕스는 전역변수로 사용해주는데 그걸 Provider로 묶어준 것  이 상태에서는   const a = useSelector(state => state.user) useSelector 를 사용할 수 없다. Provider의 컴포넌트 안에서는 사용가능하지만 밖에서는 사용 할 수가 없기 때문에 
+
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Provider store={store}>
+        <Inner/>
+      </Provider>
+    </>
   );
+}
+
+
+function Inner() {
+
+
+  const light = {
+    colors: {
+      //MainColor
+      Primary :"orange",
+      Secondary : "orangered",
+      BgColor:"#e9f1f6",
+      Color : "#000",
+      ContentBg: "#fff"
+    }
+  
+  }
+  const dark = {
+    colors: {
+      Primary :"#272929",
+      Secondary : "#e9e9e9",
+      BgColor:"#333",
+      Color:"#e9e9e9",
+      ContentBg: "#272929"
+    }
+  }
+ 
+  const theme = useSelector(state => state.dark);
+  const DarkMode = theme === 'light' ? light : dark;
+  
+    return(
+    <ThemeProvider theme={DarkMode}>
+      
+    <Globalstyle/>
+    <Nav/>
+    <Aside />
+    <Routes>
+      <Route path="/" element={<Main/>}></Route>
+      <Route path="/member" element={<Member/>}></Route>
+      <Route path="/login" element={<Login/>}></Route>
+    </Routes>
+  </ThemeProvider>)
 }
 
 export default App;
