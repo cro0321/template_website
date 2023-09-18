@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import styled from 'styled-components'
 import Mnav from './Mnav'
+import { useSelector } from 'react-redux'
 
 // a.active가 클릭했을때 active가 되면서 활성화 되는 기능 리액트 자체 제공하는 것
 
@@ -128,9 +129,6 @@ const Container = styled.div`
     box-sizing: border-box;
     z-index: 40;
     transition: all 0.5s;
-    @media screen and (min-width: 1024px){
-        display: none;
-    }
     > ul{
         margin-top: 24px;
         >li{
@@ -152,6 +150,10 @@ const Msubmenu = styled(NavSubmenu)`
         padding-left: 15px;
         a{color : #000;}
     }
+ 
+  
+
+  
 `
 
 
@@ -167,23 +169,28 @@ const MsubmenuMember = styled(NavMember)`
             &:nth-child(2){
             background-color: green;
             
-            }
-            a{
-                color: #fff;
-            }
-            
- 
         }
+        
+        a{
+            color: #fff;
+            
+        }
+       
     }
+    
+            }
+                @media screen and (max-width: 1024px){
+                display: block;
+            }
 
 `
 
 
 
+// userState props 받아서 쓸 경우 {userState2} 중괄호 꼭!!! 써주기
+function Nav({userState2}) {
 
-function Nav() {
-
-
+    const userState = useSelector(state => state.user);
     const [isHeight , setIsHeight]  = useState();
 
     const SubMenuHeight = (e)=>{
@@ -359,8 +366,10 @@ function Nav() {
             <NavMember>
                 <ul>
                     <li>
-                        <NavLink to="/login">
-                         <FontAwesomeIcon icon={faLock}></FontAwesomeIcon> 로그인
+                        <NavLink to={userState.data?.nickname? "/logout" : "/login"}>
+                            
+                            {/* data의 값이 없더라도 에러를 발생하지 않고 그냥 진행하기 ?붙여주면된다. */}
+                         <FontAwesomeIcon icon={faLock}></FontAwesomeIcon> {userState.data?.nickname? "로그아웃" : "로그인"}
                         </NavLink>
                     </li>
                     <li>
@@ -392,11 +401,13 @@ function Nav() {
         <MsubmenuMember>
                 <ul>
                     <li>
-                        <NavLink to="/login">
-                         <FontAwesomeIcon icon={faLock}></FontAwesomeIcon> 로그인
+                        <NavLink to={userState2.data?.nickname? "/logout" : "/login"}>
+                    
+                         <FontAwesomeIcon icon={faLock}></FontAwesomeIcon> {userState2.data?.nickname? "로그아웃" : "로그인"}
                         </NavLink>
                     </li>
                     <li>
+                        
                         <NavLink to="/member">
                          <FontAwesomeIcon icon={faUser}></FontAwesomeIcon> 회원가입
                         </NavLink>

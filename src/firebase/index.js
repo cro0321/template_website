@@ -19,7 +19,7 @@ const firebaseConfig = {
 // Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig);
 const firebaseAuth = getAuth(firebaseApp)
-
+// 인증 / 회원가입 / 비밀번호
 export {firebaseAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword}
 
 
