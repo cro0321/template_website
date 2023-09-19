@@ -6,9 +6,10 @@ import { firebaseAuth, createUserWithEmailAndPassword } from './../firebase'
 import {doc, setDoc, getFirestore} from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faEyeSlash, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import Modal from '../components/Modal';
-
+import { logIn } from '../store';
+import { useDispatch, useSelector } from 'react-redux';
 
 
 const Container = styled.div`
@@ -77,12 +78,14 @@ function Member() {
     const [password, setPassword] = useState("");
     const [passwordConfirm, setPasswordConfirm] = useState("");
     const [nickname, setNickname] = useState("");
-    const [phone, setPhone] = useState("");
+    const [phoneNumber, setPhoneNumber] = useState("");
     const [error, setError] = useState("");
     const [eye, setEye] = useState([0,0]);
     const [isModal, setIsModal] = useState(false);
     
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    
     const toggleEye = (index) =>{
         const newEye = [...eye];
         // 원래 있던 eye의 배열값을 복사해 배열을 벗긴다.
@@ -98,7 +101,7 @@ function Member() {
         let value = e.target.value;
     e.target.value = e.target.value.replace(/[^0-9]/g, '').replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, "$1-$2-$3").replace(/-{1,2}$/g, "");
 
-        setPhone(value);
+    setPhoneNumber(value);
     }
 
 
@@ -117,11 +120,11 @@ function Member() {
 
     }
 
-    const isValidPhone = (phone) =>{
+    const isValidPhone = (phoneNumber) =>{
         // 전화번호 유효성 검사 외우지 말고 검색 ㄱ /^[0-9]{2,3}-[0-9]{3,4}-[0-9]{4}/ 중에 {2,3} 지금은 핸드폰 번호만 필요하니까 지역번호 필요 없음 / {3,4} 중간 자리 전화번호 3자리 또는 4자리 
         const regex = /^01[0-9]-[0-9]{3,4}-[0-9]{4}$/;
         //test로 설정했기 때문에   일치하는 값이   있는지 true / false 값이 나옴 https://ju-note.tistory.com/19
-        return regex.test(phone)
+        return regex.test(phoneNumber)
     }
 
     // 이메일 유효성 검사 react 검색 ㄱ
@@ -141,7 +144,7 @@ function Member() {
             errorMessage = "이름"
          }else if(nickname.length === 0){
             errorMessage = "닉네임";
-         }else if(!isValidPhone(phone)){
+         }else if(!isValidPhone(phoneNumber)){
             // return값 때문에 실행이 되지 않아서 setIsModal에 따로 주고 return을 걸어준것
             setError("유효한 전화번호를 입력해주세요");
             setIsModal(!isModal)
@@ -173,12 +176,18 @@ function Member() {
             const userProfile = {
                 name, 
                 nickname,
-                phone
+                phoneNumber,
+                // 이메일 찾기 비밀번호 재설정까지 정보 추가하려고 이메일 추가함 wow
+                email
             }
-
+           
+       
 
             // 위의 const {user}가 완전히 실행되기 전까지 setDoc는 동작하지 않는다
             await setDoc(doc(getFirestore(), "users", user.uid), userProfile)
+
+            sessionStorage.setItem("users", user.uid)
+            dispatch(logIn(user.uid));
 
             alert("회원가입이 완료 되었습니다.");
             navigate('/');
@@ -189,6 +198,9 @@ function Member() {
             console.log(error.code);
         }
     }
+    // userState의 값 중에서 loggedIn의 로그인상태(true false)가 필요하기 때문에 
+    const userState = useSelector(state => state.user);
+    console.log(userState.loggedIn)
 
 
 
@@ -199,8 +211,14 @@ function Member() {
         // 작명에 어떤 값  prpoes는 html 속성 처럼 넣어주면 된다.
         isModal && <Modal abcd = "1234" error={error} onClose={()=>{setIsModal(false)}} />
        }
+        {
+            //화면 처음에는 안보이게 하기위해 Container위에 위치하고 이미 로그인 상태가 아니라면 Container 자체가 보여주면 되니까 아니라면에 : 넣어주면 된다.
+            // ture 일때는 === true생략가능 false를 생략하려면 맨앞에 !
+            userState.loggedIn  ? <Modal error="이미 로그인 된 상태입니다." onClose={()=>{navigate('/')}}/> : 
+    
         <Container>
-            
+           
+    
             <SignUp>
                 <Title>회원가입</Title>
                 
@@ -226,6 +244,7 @@ function Member() {
             </SignUp>
 
         </Container>
+        }
     </>
    
   )

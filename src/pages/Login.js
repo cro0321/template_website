@@ -2,7 +2,7 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import { firebaseAuth, signInWithEmailAndPassword } from './../firebase'
-import {useNavigate} from 'react-router-dom'
+import {NavLink, useNavigate} from 'react-router-dom'
 import { collection, doc, getDoc, getFirestore } from 'firebase/firestore'
 import { logIn, loggedIn } from '../store'
 import { useDispatch } from 'react-redux'
@@ -19,7 +19,7 @@ const Container = styled.div`
     align-items: center;
 `
 const SignUp = styled.div`
-    width: 35vh;
+    width: 35vw;
     padding: 20px;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
     background-color: #fff;
@@ -57,6 +57,23 @@ const Input = styled.input`
 const InputWrapper = styled.div`
     position: relative;
     margin-bottom: 20px;
+    &:last-child{
+        margin-bottom: 0; margin-top: 20px;
+        justify-content: flex-end;
+        display: flex;
+        column-gap: 20px;
+        a{
+            background-color: #40e0d0;
+            font-size: 14px;
+            text-align: center;
+            padding: 5px 20px;
+            border-radius: 5px;
+            color: #fff;
+            &:last-child{
+                background-color: #036;
+            }
+        }
+        }
     input:focus+ label,
     /* input에 값이 없다면 유지 */
     input:not(:placeholder-shown) + label{
@@ -166,7 +183,10 @@ function Login() {
                 </InputWrapper>
                 <Button>로그인</Button>
             </form>
-            <p>{error}</p>
+           <InputWrapper>
+                <NavLink to = "/findemail">이메일/비밀번호 재설정</NavLink>
+                <NavLink to = "/member">회원가입</NavLink>
+           </InputWrapper>
         </SignUp>
     </Container>
     

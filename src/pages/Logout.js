@@ -38,7 +38,7 @@ function Logout() {
 
       {/* 다른 컴포넌트에서 당겨왔을때 직접적인 OnClick 이벤트가 안먹음 그래서 OnClick 아니고 onClose가 들어감 */}
        {
-       isModal && <Modal error = "집가자" 
+       isModal && <Modal error = "로그아웃 되었습니다." 
        onClose={()=>{setIsModal(false); navigate("/");}}/>
        }
 </>

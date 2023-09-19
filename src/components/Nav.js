@@ -1,4 +1,4 @@
-import { faArrowRightFromBracket, faLock, faUser, faChevronDown } from '@fortawesome/free-solid-svg-icons'
+import { faArrowRightFromBracket, faLock, faUser, faChevronDown, faUserPen } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useState } from 'react'
 import { NavLink } from 'react-router-dom'
@@ -366,23 +366,33 @@ function Nav({userState2}) {
             <NavMember>
                 <ul>
                     <li>
-                        <NavLink to={userState.data?.nickname? "/logout" : "/login"}>
-                            
-                            {/* data의 값이 없더라도 에러를 발생하지 않고 그냥 진행하기 ?붙여주면된다. */}
-                         <FontAwesomeIcon icon={faLock}></FontAwesomeIcon> {userState.data?.nickname? "로그아웃" : "로그인"}
+                        <NavLink to={userState2.data?.nickname? "/logout" : "/login"}>
+                            <FontAwesomeIcon icon={faLock}></FontAwesomeIcon> {userState2.data?.nickname? "로그아웃" : "로그인"}
                         </NavLink>
                     </li>
+                   {
+                    userState.data?.nickname ? 
+                    // 참일때 로그인 상태
+                    <li>
+                        <NavLink to="/modify">
+                            <FontAwesomeIcon icon={faUserPen}></FontAwesomeIcon> 정보수정
+                        </NavLink>
+                     </li>
+                    :
+                    
                     <li>
                         <NavLink to="/member">
-                         <FontAwesomeIcon icon={faUser}></FontAwesomeIcon> 회원가입
+                            <FontAwesomeIcon icon={faUser}></FontAwesomeIcon> 회원가입
                         </NavLink>
-                    </li>
+                      </li> 
+
+                   }
                 </ul>
             </NavMember>
         </NavWrap>
     </NavContent> 
   
-  {/* true  false인 경우에만 !표로 줄일 수 있다. isActive2 === true ? 'on' : ""   ->isActive2 ? 'on' : ""  -> 비어있는 값이 있다면 isActive2 && 'on' 이렇게 축약해서 나타낼수있다.*/}
+  {/* true  false인 경우에만 부정을 !표로 줄일 수 있다. isActive2 === true ? 'on' : ""   ->isActive2 ? 'on' : ""  -> 비어있는 값이 있다면 isActive2 && 'on' 이렇게 축약해서 나타낼수있다.*/}
     <Hamburger  className={isActive2 && 'on' } onClick={()=>{setIsActive2(!isActive2)}}>
             
             {
@@ -402,14 +412,13 @@ function Nav({userState2}) {
                 <ul>
                     <li>
                         <NavLink to={userState2.data?.nickname? "/logout" : "/login"}>
-                    
-                         <FontAwesomeIcon icon={faLock}></FontAwesomeIcon> {userState2.data?.nickname? "로그아웃" : "로그인"}
+                            <FontAwesomeIcon icon={faLock}></FontAwesomeIcon> {userState2.data?.nickname? "로그아웃" : "로그인"}
                         </NavLink>
                     </li>
                     <li>
                         
                         <NavLink to="/member">
-                         <FontAwesomeIcon icon={faUser}></FontAwesomeIcon> 회원가입
+                            <FontAwesomeIcon icon={faUser}></FontAwesomeIcon> 회원가입
                         </NavLink>
                     </li>
                 </ul>
