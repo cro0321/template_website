@@ -1,10 +1,10 @@
-import {Route, Routes} from "react-router-dom";
+import {Route, Routes, useNavigate} from "react-router-dom";
 import Globalstyle from "./components/Globalstyle";
 import Main from "./pages/Main";
 import Aside from "./components/Aside";
 import { ThemeProvider } from "styled-components";
 import Nav from "./components/Nav";
-import store, { loggedIn } from "./store";
+import store, { logIn, loggedIn } from "./store";
 import { Provider,  useDispatch,  useSelector } from "react-redux";
 import Member from "./pages/Member";
 import Login from "./pages/Login";
@@ -14,6 +14,15 @@ import { useEffect } from "react";
 import { collection, doc, getDoc, getFirestore } from "firebase/firestore";
 import Modify from "./pages/Modify";
 import Findemail from "./pages/Findemail";
+import Write from "./pages/Write";
+import Service from "./pages/Service";
+import Notice from "./pages/service/Notice";
+import Gallery from "./pages/service/Gallery";
+import Online from "./pages/service/Online";
+import Qna from "./pages/service/Qna";
+import View from "./pages/View";
+import { useState } from "react";
+import Modal from "./components/Modal";
 
   
 
@@ -68,6 +77,9 @@ function Inner() {
   const dispatch = useDispatch();
   const uid = sessionStorage.getItem("users");
   console.log(uid)
+  if(uid){
+    dispatch(logIn(uid));
+  }
 
 
   useEffect(()=>{
@@ -96,7 +108,8 @@ function Inner() {
     // dispatch가 실행될대마다 uid가 바뀔때마다 즉 action이 진행될때마다 실행된다.
   },[dispatch,uid])
 
-
+  const [isModal, setIsModal] = useState(true);
+  const navigate = useNavigate()
     return(
     <ThemeProvider theme={DarkMode}>
       
@@ -115,6 +128,18 @@ function Inner() {
       <Route path="/modify" element={<Modify/>}></Route>
       <Route path="/findemail" element={<Findemail/>}></Route>
       <Route path="/example" element={<Example/>}></Route>
+      <Route path="/write/:board" element={<Write/>}></Route>
+      <Route path="/view/:board/:view" element={<View/>}></Route>
+      <Route path="/view/:board" element={isModal && <Modal error="유효하지 않은 경로입니다." 
+      onClose={()=>{navigate('/')}}/>}></Route>
+
+      {/* 2차 라우트 */}
+      <Route path="/service" element={<Service/>}>
+        <Route path="notice" element={<Notice/>}></Route>
+        <Route path="online" element={<Online/>}></Route>
+        <Route path="gallery" element={<Gallery/>}></Route>
+        <Route path="qna" element={<Qna/>}></Route>
+      </Route>
     </Routes>
   </ThemeProvider>)
 }

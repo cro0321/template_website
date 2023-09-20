@@ -184,6 +184,7 @@ function Member() {
        
 
             // 위의 const {user}가 완전히 실행되기 전까지 setDoc는 동작하지 않는다
+            // Wirte페이지의 addDoc의 차이점 내가 id를 직접 지정할 수 있고 add를 하면 랜덤값으로 들어갈 수 있다. 
             await setDoc(doc(getFirestore(), "users", user.uid), userProfile)
 
             sessionStorage.setItem("users", user.uid)
