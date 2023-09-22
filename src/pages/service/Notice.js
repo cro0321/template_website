@@ -71,7 +71,7 @@ function Notice() {
         // firebase에서 doc.data는 전체 content email name nickname timestamp title 이 다 들어가 있는것 그리고 클릭했을때(?)id 값이 필요하니까 id값을 또 따로 저장해준것.
         const postArray = snapShot.docs.map(doc => ({id: doc.id, ...doc.data()}));
         setPosts(postArray);
-        console.log(posts)
+    
       }catch(error){
         console.log(error);
       }

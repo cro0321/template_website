@@ -5,6 +5,8 @@ import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import Modal from '../components/Modal';
+import { useEffect } from 'react';
+import { doc, getDoc, getFirestore } from 'firebase/firestore';
 
 
 
@@ -43,18 +45,7 @@ const Heading = styled.h3`
   }
 `;
 
-const UploadButton = styled.button`
-  height: 30px;
-  background-color: #c6c6c6;
-  color: white;
-  border-radius: 5px;
-  padding: 2px 10px;
-  font-size: 13px;
 
-  &:hover {
-    background-color: #2ed090;
-  }
-`;
 
 const ContentWrapper = styled.div`
   width: auto;
@@ -95,23 +86,57 @@ const ContentLabel = styled.p`
 function Write() {
   const [txtTitle, setTxtTitle] = useState("");
   // 뒤의 주소를 가져오는 react에서 제공하는 기능 useParams http://localhost:3000/write/b 하면 b를 가져와줌
-  const { board } = useParams()
+  const { board , view } = useParams()
   // alert(board)
   const boards = ["notice", "online", "qna", "gallery"];
   //  const {board} = useParams() 이 값과 boards값이 다르면 튕겨냄
 
 
-  const [isModal, setIsModal] = useState(true);
+  const [isModal, setIsModal] = useState(view ? false : true);
   const navigate = useNavigate();
-
+  const [message, setMessage] = useState("");
   // 로그인 했을때만 글쓰기 창을 이용할 수 있게 하기 위해서.
   const memberProfile = useSelector(state => state.user);
-  console.log(memberProfile)
+  console.log(memberProfile.uid)
+  const [postData, setPopstData] = useState(null);
+  const uid = sessionStorage.getItem("users");
+  const [userUid, setUserUid] = useState(uid)
+
+  useEffect(()=>{
+    
+    if(board && view){
+      const fetchData = async ()=>{
+        const postRef = doc(getFirestore(), board, view);
+        const postSnapShot = await getDoc(postRef);
+
+ 
+        // postSnapShot에 데이터가 있는지 화인하는 코드 .exists()
+        if(postSnapShot.exists()){
+          setIsModal(false)
+          setPopstData(postSnapShot.data())
+          setTxtTitle(postSnapShot.data().title)
+          if(uid !== postSnapShot.data().uid){
+            setIsModal(true)
+            setMessage("권한없음")
+            return;
+
+          }
+
+        }else{
+            setIsModal(true)
+            setMessage("해당 문서가 존재하지 않습니다.")
+        }
+    }
+    fetchData()
+    }
+
+  }, [board, view])
+
   if (!memberProfile.loggedIn) {
     return (
       <>
         {
-          isModal && <Modal error="로그인 후 이용해주시기 바랍니다." onClose={() => { setIsModal(false); navigate('/login') }} />
+          isModal && <Modal error="로그인 후 이용해주시기 바랍니다." onClose={() => {setIsModal(false); navigate('/login') }} />
         }
 
       </>
@@ -128,27 +153,33 @@ function Write() {
     )
   }
 
-  return (
 
+
+
+  return (
+    <>
+   {
+            isModal && view && <Modal error={message} onClose={() => {setIsModal(false); navigate(`/service${board}`) }} />
+    }
     <Container>
       <InnerContainer>
         <Header>
-          <Heading>글쓰기</Heading>
-          <UploadButton>등록하기</UploadButton>
+          <Heading>{board && view? "글수정" : "글쓰기"}</Heading>
         </Header>
-
         <ContentWrapper>
           <ContentInner>
             <Title>제목</Title>
-            <TextInput type="text" onChange={(e) => { setTxtTitle(e.target.value) }} />
+            <TextInput defaultValue={postData && postData.title} type="text" onChange={(e) => {setTxtTitle(e.target.value) }} />
           </ContentInner>
           <ContentInputWrapper>
             <ContentLabel>내용</ContentLabel>
-            <Ckeditor title={txtTitle} />
+            <Ckeditor postData={postData} title={txtTitle} />
           </ContentInputWrapper>
         </ContentWrapper>
       </InnerContainer>
     </Container>
+
+    </>
   );
 }
 

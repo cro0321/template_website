@@ -23,6 +23,7 @@ import Qna from "./pages/service/Qna";
 import View from "./pages/View";
 import { useState } from "react";
 import Modal from "./components/Modal";
+import Notpage from "./pages/Notpage";
 
   
 
@@ -71,18 +72,21 @@ function Inner() {
   const theme = useSelector(state => state.dark);
   const DarkMode = theme === 'light' ? light : dark;
   const userState = useSelector(state => state.user);
-  console.log(userState)
+  // console.log(userState)
   // 세션스토리지 값 받아오기
 
   const dispatch = useDispatch();
   const uid = sessionStorage.getItem("users");
-  console.log(uid)
-  if(uid){
-    dispatch(logIn(uid));
-  }
+  // console.log(uid)
 
 
+
+  
   useEffect(()=>{
+    // 완전히 로딩되기 전에 정보가 바뀌면 inner어저구 오류가....그래서 useEffect에 dispatch넣어준것 
+    if(uid){
+      dispatch(logIn(uid));
+    }
     const fetchUser = async () =>{
       if(!uid) return;
       
@@ -125,21 +129,23 @@ function Inner() {
       <Route path="/member" element={<Member/>}></Route>
       <Route path="/login" element={<Login/>}></Route>
       <Route path="/logout" element={<Logout/>}></Route>
-      <Route path="/modify" element={<Modify/>}></Route>
+      <Route path="/modify" element={<Member/>}></Route>
       <Route path="/findemail" element={<Findemail/>}></Route>
       <Route path="/example" element={<Example/>}></Route>
       <Route path="/write/:board" element={<Write/>}></Route>
       <Route path="/view/:board/:view" element={<View/>}></Route>
-      <Route path="/view/:board" element={isModal && <Modal error="유효하지 않은 경로입니다." 
-      onClose={()=>{navigate('/')}}/>}></Route>
+      {/* <Route path="/view/:board" element={isModal && <Modal error="유효하지 않은 경로입니다." onClose={()=>{navigate('/')}}/>}></Route> */}
+      <Route path="/edit/:board/:view" element={<Write/>}></Route>
 
       {/* 2차 라우트 */}
       <Route path="/service" element={<Service/>}>
         <Route path="notice" element={<Notice/>}></Route>
         <Route path="online" element={<Online/>}></Route>
-        <Route path="gallery" element={<Gallery/>}></Route>
         <Route path="qna" element={<Qna/>}></Route>
+        <Route path="gallery" element={<Gallery/>}></Route>
       </Route>
+      {/*인터넷 에러상태코드 검색하면 다 나옴 404페이지 : 페이지가 없음 404Notfound / 403페이지 : 폴더가 없다(폴더제한) / 500페이지 서버에러(서버가잠김)를 만들때 규칙 Route의 하단에 꼭 써주기 path="/*" -> 위에 작성한 페이지 말고 모두를 의미함  */}
+      <Route path="/*" element={<Notpage/>}></Route>
     </Routes>
   </ThemeProvider>)
 }
