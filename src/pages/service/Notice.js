@@ -78,6 +78,19 @@ function Notice() {
     }
     fetchPosts()
   },[])
+  const toggleLike = (index) =>{
+    // 1.원래 값을 복사 
+    // 2. 복사한 배열의 원하는 인덱스 번호의 값을 변경
+    // 3. 그 값을 원래 값에 붙여넣기 
+    // 원하는 배열을 복사해서 각각 스테이트값을 변경하려면
+    const newLikes = [...likes];
+    newLikes[index] = !newLikes[index]
+    setLikes(newLikes);
+  }
+
+
+  const [likes, setLikes] = useState(Array(posts.length).fill(1));
+
   // 데이터가 없을때는 화면이 안보이게 설정하려면?
   if(posts.length === 0){
     return <div>로딩중</div>
@@ -88,6 +101,16 @@ function Notice() {
     
       <BoardWrapper>
         <Title>공지사항</Title>
+          <List>
+            <ListItem>번호</ListItem>
+            <ListItem>제목</ListItem>
+            <ListItem>작성자</ListItem>
+            <ListItem>작성일</ListItem>
+            <ListItem>조회수</ListItem>
+            <ListItem>좋아요</ListItem>
+
+          </List>
+     
           {
           posts.map((e,i)=>{
               return (
@@ -100,6 +123,7 @@ function Notice() {
                 {/* timestamp는 유형이라(firestore에서 제공)을 날짜형식으로 바꾼후 스트링(문자열)으로 바꿔서 출력해줘야한다. */}
                 <ListItem>{e.timestamp.toDate().toLocaleDateString()}</ListItem>
                 <ListItem>{e.view}</ListItem>
+                <ListItem onClick={()=>{toggleLike(i)}}>{likes[i]? "༼ つ ◕_◕ ༽つ" : "🤍"}</ListItem>
               </List>
               )
           })

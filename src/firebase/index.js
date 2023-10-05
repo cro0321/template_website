@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth'
+import {GoogleAuthProvider, GithubAuthProvider, signInWithPopup, createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth'
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -19,7 +19,7 @@ const firebaseConfig = {
 // Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig);
 const firebaseAuth = getAuth(firebaseApp)
-// 인증 / 회원가입 / 비밀번호
-export {firebaseAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail}
+//구글, 깃허브, 이건뭐지?, 인증 / 회원가입 / 비밀번호
+export {GoogleAuthProvider, GithubAuthProvider, signInWithPopup, firebaseAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail}
 
 

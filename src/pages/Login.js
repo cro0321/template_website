@@ -1,11 +1,13 @@
 
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { firebaseAuth, signInWithEmailAndPassword } from './../firebase'
+import {GoogleAuthProvider, GithubAuthProvider, signInWithPopup, firebaseAuth, signInWithEmailAndPassword } from './../firebase'
 import {NavLink, useNavigate} from 'react-router-dom'
 import { collection, doc, getDoc, getFirestore } from 'firebase/firestore'
 import { logIn, loggedIn } from '../store'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faGithub, faGoogle } from '@fortawesome/free-brands-svg-icons'
 
 // 이전페이지로 가기 위해서 필요 useHistory
 // 이메일인증과 비밀번호 담는게 필요해서 useSTate 필요 
@@ -105,6 +107,23 @@ const Button = styled.button`
     cursor: pointer;
 `
 
+const SnsButton = styled.button`
+    display: flex;
+    align-items: center; padding: 8px 12px;
+    border:  none; border-radius: 4px;
+    cursor: pointer;
+
+    background-color: ${props => props.$bgColor || 'gray'};
+    color: ${props => props.color || 'white'};
+    font-size: 16px; width: 50%;
+    transition: 0.3s;
+    &:hover{
+        background-color: ${props => props.$hoverBgColor || '#666'};
+    }svg{
+        margin-right: 8px;
+    }
+    
+`
 
 
 
@@ -116,7 +135,8 @@ function Login() {
     const [error, setError]  = useState();
     const navigate = useNavigate();
     const dispatch = useDispatch();
-
+    const userState = useSelector(state => state.user);
+    console.log(userState)
     // console.log(navigate)
     // 뒤로가기 해주려면 -1 navigate(-1)
     // navigate(-1)
@@ -164,6 +184,50 @@ function Login() {
         }
     }
 
+    
+// sns로그인 셋팅 끝... wow
+    const snsLogin = async(data)=>{
+        let provider;
+        // 다른 데이터 추가하기 쉽게 switch문을 씀
+        switch(data){
+            case 'google':
+                provider = new GoogleAuthProvider();
+            break;
+            case 'github':
+                provider = new GithubAuthProvider();
+            break;
+
+            default:
+                return;
+
+        }
+
+        try {
+            const result = await signInWithPopup(firebaseAuth, provider)
+            const user = result.user;
+            console.log(user)
+            sessionStorage.setItem("users", user.uid)
+            dispatch(logIn(user.uid))
+            navigate("/member", {
+                state : 
+                {
+                    nickname: user.displayName,
+                    email : user.email,
+                    pohotoURL: user.photoURL
+
+                }
+            })
+            
+        } catch (error) {
+            console.log(errorMsg(error));
+            setError(errorMsg(error));
+        }
+
+    }
+    
+    // const snsLogin = (sns)=>{
+    //     alert(sns)
+    // }
   return (
     <>
     <Container>
@@ -186,6 +250,14 @@ function Login() {
            <InputWrapper>
                 <NavLink to = "/findemail">이메일/비밀번호 재설정</NavLink>
                 <NavLink to = "/member">회원가입</NavLink>
+           </InputWrapper>
+           <InputWrapper>
+                <SnsButton onClick={()=>{snsLogin('google')}}  $bgColor="#db4437" $hoverBgColor="#b33225">
+                    <FontAwesomeIcon icon={faGoogle}/>Login With Google
+                </SnsButton>        
+                <SnsButton onClick={()=>{snsLogin('github')}}   $bgColor="#333"  $hoverBgColor="#111">
+                    <FontAwesomeIcon  icon={faGithub}/>Login With Github
+                </SnsButton>        
            </InputWrapper>
         </SignUp>
     </Container>

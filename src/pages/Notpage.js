@@ -58,7 +58,7 @@ const Button = styled.button`
 
 function Notpage() {
     const navigate = useNavigate();
-    const [countDown, setCountDown] = useState(500);
+    const [countDown, setCountDown] = useState(10);
     // 로딩됐을때실행을 위해 useEffect
 
     useEffect(()=>{
