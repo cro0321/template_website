@@ -3,6 +3,9 @@ import Product from './Product'
 import { useMemo } from 'react'
 import Banner from '../components/home/Banner'
 import Company from '../components/home/Company'
+import Content from '../components/home/Content'
+import Different from '../components/home/Different'
+import Management from '../components/home/Management'
 
 // import { useDispatch, useSelector } from 'react-redux'
 // import { changeName } from '../store'
@@ -44,13 +47,19 @@ function Main() {
   },[]) 
   // 재랜더링될때마다 axios 데이터
 
+  
 
 
   let [count, setCount] = useState(0)
   return (
     <>
-  <Banner/>
-  <Company/>
+    <Banner/>
+    <Company/>
+    <Content/>
+    <Different/>
+    <Management/>
+
+
 
 
 
@@ -60,7 +69,6 @@ function Main() {
     {/* <p>{count}</p> */}
     {/* 랜더링에 관한 memo(?) 메인에 Product를 뿌렸고 버튼을 눌렀을때 Product도 계ㅔㅔㅔㅔ속 재실행됨 이걸 막는 기능*/}
     {/* <Product/> */}
-   
 
     {/* <p>{a}</p>
     <p>{b}</p> */}

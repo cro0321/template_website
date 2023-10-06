@@ -25,7 +25,9 @@ import { useState } from "react";
 import Modal from "./components/Modal";
 import Notpage from "./pages/Notpage";
 
-  
+
+
+ 
 
 
 function App() {
@@ -37,9 +39,11 @@ function App() {
 
   return (
     <>
+ 
       <Provider store={store}>
         <Inner/>
       </Provider>
+
     </>
   );
 }
@@ -115,6 +119,7 @@ function Inner() {
   const [isModal, setIsModal] = useState(true);
   const navigate = useNavigate()
     return(
+      
     <ThemeProvider theme={DarkMode}>
       
     <Globalstyle/>

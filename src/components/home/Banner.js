@@ -95,11 +95,11 @@ function Banner() {
   return (
     <>
     <Swiper 
-        autoplay = {{
-            delay : 1000,
-            // 수동으로 넘겼을때도 오토프플레이 적용되는걸 막는것
-            disableOnInteraction: false
-        }}
+        // autoplay = {{
+        //     delay : 1000,
+        //     // 수동으로 넘겼을때도 오토프플레이 적용되는걸 막는것
+        //     disableOnInteraction: false
+        // }}
         loop={true}
         // 화면에 몇개씩 보일지
         slidesperview={1}
